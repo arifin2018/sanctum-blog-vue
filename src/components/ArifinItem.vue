@@ -1,10 +1,5 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">Navbar</a>
-            </div>
-        </nav>
         <div class="alert alert-warning" role="alert">
             This is a warning alert—check it out!
         </div>
