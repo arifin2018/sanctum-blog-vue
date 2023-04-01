@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ArifinItem from "../components/ArifinItem.vue";
+import AuthLogin from "../components/auth/Login.vue";
 import AboutView from '../views/AboutView.vue';
 import FooterAbout from '../components/Footer/FooterAbout.vue';
+import Footer from '../components/Footer/Footer.vue';
 
 const routes = [
   {
@@ -23,14 +24,18 @@ const routes = [
     }
   },
   {
-    path: '/arifin',
-    name: 'arifin',
-    component: ArifinItem
+    path: '/auth/login',
+    name: 'auth.login',
+    components: {
+      default: AuthLogin,
+      footer: Footer
+    }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
+  linkActiveClass: 'active',
   routes
 })
 

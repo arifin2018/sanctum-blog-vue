@@ -1,6 +1,8 @@
 <template>
   <Navigation />
-  <router-view />
+  <div class="py-2 container">
+    <router-view />
+  </div>
   <footer>
     <router-view name="footer" class="w-100 position-absolute text-center bottom-0"></router-view>
   </footer>
@@ -21,7 +23,6 @@
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
   }
 
