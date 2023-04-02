@@ -19,6 +19,10 @@
 </template>
 
 <script>
+    import {
+        mapActions,
+        mapGetters
+    } from "vuex";
     export default {
         name: 'Login',
         data() {
@@ -27,71 +31,28 @@
                     email: '',
                     password: ''
                 },
-                errors: ''
+                errors: '',
+                user: []
             }
         },
+        computed: {
+            ...mapGetters({
+                userd: 'auth/user',
+                tokend: 'auth/token'
+            })
+        },
         methods: {
+            ...mapActions({
+                login: 'auth/login',
+                getAllData: 'auth/getAllData'
+            }),
             async authLogin() {
                 try {
-                    await this.axios.post('api/login', this.form, {
-                        headers: {
-                            'Accept': 'application/json',
-                        }
-                    }).then((response) => {
-                        this.$swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: response.data.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        })
-                    });
+                    let response = await this.login(this.form)
                 } catch (error) {
-                    if (error.response != 'undefined') {
-                        if (error.response.data.message == 'The given data was invalid.') {
-                            for (const key in error.response.data.errors) {
-                                this.errors = `${error.response.data.errors[key]}`;
-                                this.$swal.fire({
-                                    position: 'center',
-                                    icon: 'error',
-                                    title: this.errors,
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                })
-                            }
-                        } else if (error.response.data.message == 'Unauthorized') {
-                            this.errors = error.response.data.message;
-                            this.$swal.fire({
-                                position: 'center',
-                                icon: 'error',
-                                title: this.errors,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        } else {
-                            console.log(error);
-                            this.errors = "there's something wrong";
-                            this.$swal.fire({
-                                position: 'center',
-                                icon: 'error',
-                                title: this.errors,
-                                showConfirmButton: false,
-                                timer: 2000
-                            })
-                        }
-                    } else {
-                        this.errors = "there's something wrong";
-                        this.$swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: this.errors,
-                            showConfirmButton: false,
-                            timer: 2000
-                        })
-                    }
-
+                    console.log(error);
                 }
-            }
+            },
         },
     }
 </script>
