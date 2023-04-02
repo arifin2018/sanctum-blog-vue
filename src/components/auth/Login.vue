@@ -46,17 +46,6 @@
                     });
                 } catch (error) {
                     if (error.response.data.message == 'The given data was invalid.') {
-                        // switch (error.response.data.errors) {
-                        //     case value:
-
-                        //         break;
-
-                        //     default:
-                        //         break;
-                        // }
-                        // for (const iterator of error.response.data.errors) {
-                        //     console.log(iterator);
-                        // }
                         for (const key in error.response.data.errors) {
                             this.errors = `${error.response.data.errors[key]}`;
                         }
