@@ -10,7 +10,8 @@
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" v-model="form.password">
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"
+                    v-model="form.password">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -22,16 +23,46 @@
         name: 'Login',
         data() {
             return {
-                form:{
+                form: {
                     email: '',
                     password: ''
-                }
+                },
+                errors: ''
             }
         },
         methods: {
-            authLogin(){
-                console.log(this.form.email);
-                console.log(this.form.password);
+            async authLogin() {
+                // this.axios.post('http://127.0.0.1:8000/api/arifin').then(function(response){
+                //     console.log(response.data.message);
+                // });
+                try {
+                    await this.axios.post('http://127.0.0.1:8000/api/login', this.form, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(function (response) {
+                        console.log(response);
+                    });
+                } catch (error) {
+                    if (error.response.data.message == 'The given data was invalid.') {
+                        // switch (error.response.data.errors) {
+                        //     case value:
+
+                        //         break;
+
+                        //     default:
+                        //         break;
+                        // }
+                        // for (const iterator of error.response.data.errors) {
+                        //     console.log(iterator);
+                        // }
+                        for (const key in error.response.data.errors) {
+                            this.errors = `${error.response.data.errors[key]}`;
+                        }
+                    }
+                    // console.log(error.response.data.message);
+                }
             }
         },
     }
