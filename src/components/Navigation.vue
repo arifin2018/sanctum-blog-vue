@@ -11,7 +11,7 @@
                     <div class="navbar-nav ml-auto">
                         <router-link class="nav-item nav-link" to="/">Home</router-link>
                         <router-link class="nav-item nav-link" to="/about">About</router-link>
-                        <router-link class="nav-item nav-link" :to="{name: 'auth.login'}">Arifin</router-link>
+                        <router-link class="nav-item nav-link" :to="{name: 'auth.login'}">Login</router-link>
                     </div>
                 </div>
             </div>

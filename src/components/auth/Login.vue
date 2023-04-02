@@ -32,25 +32,64 @@
         },
         methods: {
             async authLogin() {
-                // this.axios.post('http://127.0.0.1:8000/api/arifin').then(function(response){
-                //     console.log(response.data.message);
-                // });
                 try {
-                    await this.axios.post('http://127.0.0.1:8000/api/login', this.form, {
+                    await this.axios.post('api/login', this.form, {
                         headers: {
                             'Accept': 'application/json',
-                            'Content-Type': 'multipart/form-data'
                         }
-                    }).then(function (response) {
-                        console.log(response);
+                    }).then((response) => {
+                        this.$swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
                     });
                 } catch (error) {
-                    if (error.response.data.message == 'The given data was invalid.') {
-                        for (const key in error.response.data.errors) {
-                            this.errors = `${error.response.data.errors[key]}`;
+                    if (error.response != 'undefined') {
+                        if (error.response.data.message == 'The given data was invalid.') {
+                            for (const key in error.response.data.errors) {
+                                this.errors = `${error.response.data.errors[key]}`;
+                                this.$swal.fire({
+                                    position: 'center',
+                                    icon: 'error',
+                                    title: this.errors,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                })
+                            }
+                        } else if (error.response.data.message == 'Unauthorized') {
+                            this.errors = error.response.data.message;
+                            this.$swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: this.errors,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        } else {
+                            console.log(error);
+                            this.errors = "there's something wrong";
+                            this.$swal.fire({
+                                position: 'center',
+                                icon: 'error',
+                                title: this.errors,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
                         }
+                    } else {
+                        this.errors = "there's something wrong";
+                        this.$swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: this.errors,
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
                     }
-                    // console.log(error.response.data.message);
+
                 }
             }
         },
