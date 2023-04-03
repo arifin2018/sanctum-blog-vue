@@ -7,7 +7,7 @@
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <template v-if="!checkAuth">
+                <template v-if="!auth">
                     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div class="navbar-nav ml-auto">
                             <router-link class="nav-item nav-link" to="/">Home</router-link>
@@ -17,13 +17,13 @@
                     </div>
                 </template>
                 <template v-else>
-                    <div class="dropdown">
+                    <div class="dropdown py-2">
                         <a class="nav-item dropdown-toggle list-unstyled text-decoration-none" href="#" id="navbarDropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ userMe.data.name }}
+                            {{ userMe.name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Action</a>
+                            <a @click="logout()" class="dropdown-item btn">Logout</a>
                             <a class="dropdown-item" href="#">Another action</a>
                             <a class="dropdown-item" href="#">Something else here</a>
                         </div>
@@ -35,26 +35,50 @@
 </template>
 
 <script>
-    import {
-        mapGetters
-    } from "vuex";
+    import { mapActions, mapGetters } from "vuex";
 
     export default {
         name: 'Navigation',
         data() {
             return {
-                userMe: []
+                userMe: [],
+                auth: false
             }
         },
         computed: {
             ...mapGetters({
-                checkAuth: 'auth/check',
-                user: 'auth/user'
-            })
+                user: 'auth/user',
+            }),
+            ...mapActions({
+                log_out: 'auth/logout',
+            }),
+        },
+        mounted() {
+            if (this.$cookies.get('SET_authenticated') != null && localStorage.getItem('SET_user') != null) {
+                this.userMe = JSON.parse(localStorage.getItem('SET_user'))
+                this.auth = this.$cookies.get('SET_authenticated')
+            }
+        },
+        methods: {
+            logout(){
+                this.log_out
+            } 
         },
         watch:{
             user(val, oldval){
-                this.userMe = val  
+                console.log(val);
+                if (val.data) {
+                        this.userMe = val.data
+                        this.auth = this.$cookies.get('SET_authenticated')
+                }else if (this.$cookies.get('SET_authenticated') != null && localStorage.getItem('SET_user') != null) {
+                        this.userMe = localStorage.getItem('SET_user')
+                        this.auth = this.$cookies.get('SET_authenticated')
+                }
+                else{
+                    this.userMe = [],
+                    this.auth = false
+                }
+                
             }
         }
     }

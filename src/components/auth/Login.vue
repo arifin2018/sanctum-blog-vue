@@ -35,20 +35,14 @@
                 user: []
             }
         },
-        computed: {
-            ...mapGetters({
-                userd: 'auth/user',
-                tokend: 'auth/token'
-            })
-        },
         methods: {
             ...mapActions({
                 login: 'auth/login',
-                getAllData: 'auth/getAllData'
             }),
             async authLogin() {
                 try {
                     let response = await this.login(this.form)
+                    this.$router.replace({name: 'home'});
                 } catch (error) {
                     console.log(error);
                 }

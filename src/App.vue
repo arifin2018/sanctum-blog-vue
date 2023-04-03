@@ -14,7 +14,7 @@
     name: 'App',
     components: {
       Navigation
-    }
+    },
   }
 </script>
 
