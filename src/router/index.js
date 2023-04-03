@@ -46,9 +46,10 @@ router.beforeEach((to,from ,next)=>{
   if (to.name == 'auth.login' && (store.getters['auth/check'] || cookie.get('SET_authenticated'))) {
     next({name: 'home'});
   }else{
-    if (cookie.get('SET_authenticated') == null) {
+    if (cookie.get('SET_authenticated') == null || sessionStorage.getItem('SET_token') || localStorage.getItem('SET_user')) {
       localStorage.clear();
       sessionStorage.clear();
+      cookie.remove('SET_authenticated');
     }
     next();
   }
