@@ -1,4 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory
+} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AuthLogin from "../components/auth/Login.vue";
 import AboutView from '../views/AboutView.vue';
@@ -6,9 +9,9 @@ import FooterAbout from '../components/Footer/FooterAbout.vue';
 import Footer from '../components/Footer/Footer.vue';
 import store from '../store'
 import cookie from 'vue-cookies'
+import Blog from '../components/blog/Blog.vue'
 
-const routes = [
-  {
+const routes = [{
     path: '/',
     name: 'home',
     component: HomeView,
@@ -20,6 +23,20 @@ const routes = [
       default: AboutView,
       footer: FooterAbout
     },
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/blog',
+    name: 'blog',
+    components: {
+      default: Blog,
+      footer: Footer
+    },
+    meta: {
+      auth: true
+    }
   },
   {
     path: '/auth/login',
@@ -32,6 +49,9 @@ const routes = [
   {
     path: '/auth/logout',
     name: 'auth.logout',
+    meta: {
+      auth: true
+    }
   }
 ]
 
@@ -41,15 +61,31 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to,from ,next)=>{
-  document.title = to.name + " | Sanctum.blog" ;
-  if (to.name == 'auth.login' && (store.getters['auth/check'] || cookie.get('SET_authenticated'))) {
-    next({name: 'home'});
-  }else{
-    if (cookie.get('SET_authenticated') == null || sessionStorage.getItem('SET_token') || localStorage.getItem('SET_user')) {
+router.beforeEach((to, from, next) => {
+  document.title = to.name + " | Sanctum.blog";
+  if (typeof to.meta.auth != 'undefined') {
+    // if (to.meta.auth != (cookie.get('SET_authenticated').toLowerCase() === 'true')) {
+    if (to.meta.auth.toString() != cookie.get('SET_authenticated')) {
+      next({
+        name: 'auth.login'
+      })
+    } else{
+      next()
+    } 
+  }
+
+  if (to.name == 'auth.login' && (store.getters['auth/check'] || cookie.get('SET_authenticated')) && sessionStorage.getItem('SET_token') && localStorage.getItem('SET_user')) {
+    next({
+      name: 'home'
+    });
+  } else {
+    if (cookie.get('SET_authenticated') == null || sessionStorage.getItem('SET_token') == null || localStorage.getItem('SET_user') == null) {
       localStorage.clear();
       sessionStorage.clear();
-      cookie.remove('SET_authenticated');
+      for (const iterator of cookie.keys()) {
+        cookie.remove(iterator)
+      }
+      next();
     }
     next();
   }

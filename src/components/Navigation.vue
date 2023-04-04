@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                <router-link to='/'>Navbar</router-link>
+                <router-link :to='{name:"home"}'>Navbar</router-link>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -12,6 +12,7 @@
                         <div class="navbar-nav ml-auto">
                             <router-link class="nav-item nav-link" to="/">Home</router-link>
                             <router-link class="nav-item nav-link" to="/about">About</router-link>
+                            <router-link class="nav-item nav-link" :to="{name: 'blog'}">Blog</router-link>
                             <router-link class="nav-item nav-link" :to="{name: 'auth.login'}">Login</router-link>
                         </div>
                     </div>
@@ -23,8 +24,11 @@
                             {{ userMe.name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a @click="logout()" class="dropdown-item btn">Logout</a>
-                            <a class="dropdown-item" href="#">Another action</a>
+                            <form @submit.prevent="authLogout()">
+                                <button class="dropdown-item btn">Logout</button>
+                            </form>
+                            <router-link class="dropdown-item btn" :to="{name: 'about'}">About</router-link>
+                            <router-link class="dropdown-item btn" :to="{name: 'blog'}">Blog</router-link>
                             <a class="dropdown-item" href="#">Something else here</a>
                         </div>
                     </div>
@@ -49,9 +53,6 @@
             ...mapGetters({
                 user: 'auth/user',
             }),
-            ...mapActions({
-                log_out: 'auth/logout',
-            }),
         },
         mounted() {
             if (this.$cookies.get('SET_authenticated') != null && localStorage.getItem('SET_user') != null) {
@@ -60,8 +61,18 @@
             }
         },
         methods: {
-            logout(){
-                this.log_out
+            ...mapActions({
+                logout: 'auth/logout',
+            }),
+            async authLogout(){
+                try {
+                    await this.logout()
+                    this.$router.replace({name: 'home'});
+                } catch (error) {
+                    console.log('error.logout');
+                    console.log(error);
+                }
+                
             } 
         },
         watch:{

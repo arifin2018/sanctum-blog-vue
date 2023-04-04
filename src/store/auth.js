@@ -8,7 +8,8 @@ export default {
     state: {
         authenticated: false,
         user: [],
-        token: ''
+        token: '',
+        timeExpired: 0
     },
     getters: {
         check(state) {
@@ -19,6 +20,9 @@ export default {
         },
         token(state) {
             return state.token
+        },
+        timeExpired(state) {
+            return state.timeExpired
         }
     },
     mutations: {
@@ -30,9 +34,13 @@ export default {
         },
         SET_token(state, value) {
             state.token = value
+        },
+        SET_timeExpired(state, value) {
+            state.timeExpired = value
         }
     },
     actions: {
+
         async login({
             commit,
             dispatch
@@ -46,8 +54,7 @@ export default {
                     commit('SET_token', response.data.access_token)
                     dispatch('me')
                     const diff = new Date(response.data.expired_at) - new Date(moment().format('YYYY-MM-DD hh:mm:ss'));
-                    cookie.set('SET_authenticated', true, Math.floor((diff/1000)/60)+'min',{httpOnly: true})
-                    sessionStorage.setItem('SET_token', response.data.access_token)
+                    commit('SET_timeExpired', Math.floor((diff / 1000) / 60))
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
@@ -79,7 +86,6 @@ export default {
                             timer: 2000
                         })
                     } else {
-                        console.log(error);
                         this.errors = "there's something wrong";
                         this.$swal.fire({
                             position: 'center',
@@ -103,10 +109,7 @@ export default {
             }
         },
 
-        async me({
-            commit,
-            getters
-        }) {
+        async me({commit,getters}) {
             try {
                 let response = await axios.get('api/user', {
                     headers: {
@@ -114,25 +117,28 @@ export default {
                     }
                 })
                 commit('SET_authenticated', true),
-                commit('SET_user', response)
+                    commit('SET_user', response)
                 localStorage.setItem('SET_user', JSON.stringify(response.data))
+                cookie.set('SET_authenticated', true, getters.timeExpired + 'MIN')
+                sessionStorage.setItem('SET_token', getters.token)
             } catch (error) {
                 commit('SET_authenticated', false),
-                commit('SET_user', [])
+                    commit('SET_user', [])
             }
         },
 
-        async logout({commit}) {
+        async logout({
+            commit
+        }) {
             try {
                 let token = sessionStorage.getItem("SET_token");
-                console.log(token);
-                let response = await axios.post('api/logout', {},{
+                let response = await axios.post('api/logout', {}, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
                 });
                 commit('SET_authenticated', false),
-                commit('SET_user', [])
+                    commit('SET_user', [])
                 localStorage.clear();
                 sessionStorage.clear();
                 cookie.remove('SET_authenticated')
@@ -144,8 +150,12 @@ export default {
                     timer: 2000
                 })
             } catch (error) {
-                console.log(error);
+                if (error.response.data.message == 'Unauthenticated.') {
+                    console.log('hai');
+                    cookie.remove('SET_authenticated')
+                    location.reload()
+                }
             }
-        }
+        },
     },
 }
