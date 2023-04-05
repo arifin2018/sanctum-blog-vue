@@ -24,12 +24,11 @@
                             {{ userMe.name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <router-link class="dropdown-item btn" :to="{name: 'about'}">About</router-link>
+                            <router-link class="dropdown-item btn" :to="{name: 'blog'}">Blog</router-link>
                             <form @submit.prevent="authLogout()">
                                 <button class="dropdown-item btn">Logout</button>
                             </form>
-                            <router-link class="dropdown-item btn" :to="{name: 'about'}">About</router-link>
-                            <router-link class="dropdown-item btn" :to="{name: 'blog'}">Blog</router-link>
-                            <a class="dropdown-item" href="#">Something else here</a>
                         </div>
                     </div>
                 </template> 

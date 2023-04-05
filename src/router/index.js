@@ -10,6 +10,7 @@ import Footer from '../components/Footer/Footer.vue';
 import store from '../store'
 import cookie from 'vue-cookies'
 import Blog from '../components/blog/Blog.vue'
+import Swal from 'sweetalert2/dist/sweetalert2'
 
 const routes = [{
     path: '/',
@@ -64,31 +65,47 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.name + " | Sanctum.blog";
   if (typeof to.meta.auth != 'undefined') {
-    // if (to.meta.auth != (cookie.get('SET_authenticated').toLowerCase() === 'true')) {
     if (to.meta.auth.toString() != cookie.get('SET_authenticated')) {
+        if (cookie.get('SET_authenticated') == null && sessionStorage.getItem('SET_token') != null) {
+          window.location.reload();
+          return Swal.fire({
+            position: 'center',
+            icon: 'error',
+            title: "Sorry you've logout, please login again",
+            showConfirmButton: false,
+            timer: 3500
+          })
+        }
+        next({
+          name: 'auth.login'
+        })
+        return Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: "Sorry you are not login, please login the first",
+          showConfirmButton: false,
+          timer: 3500
+        })
+      } else{
+        next()
+      } 
+    }
+    
+    if (to.name == 'auth.login' && (store.getters['auth/check'] || cookie.get('SET_authenticated')) && sessionStorage.getItem('SET_token') && localStorage.getItem('SET_user')) {
       next({
-        name: 'auth.login'
-      })
-    } else{
-      next()
-    } 
-  }
-
-  if (to.name == 'auth.login' && (store.getters['auth/check'] || cookie.get('SET_authenticated')) && sessionStorage.getItem('SET_token') && localStorage.getItem('SET_user')) {
-    next({
-      name: 'home'
-    });
-  } else {
-    if (cookie.get('SET_authenticated') == null || sessionStorage.getItem('SET_token') == null || localStorage.getItem('SET_user') == null) {
-      localStorage.clear();
-      sessionStorage.clear();
-      for (const iterator of cookie.keys()) {
-        cookie.remove(iterator)
+        name: 'home'
+      });
+    } else {
+        if (cookie.get('SET_authenticated') == null || sessionStorage.getItem('SET_token') == null || localStorage.getItem('SET_user') == null) {
+          localStorage.clear();
+          sessionStorage.clear();
+        for (const iterator of cookie.keys()) {
+          cookie.remove(iterator)
+        }
+        next();
       }
       next();
     }
-    next();
-  }
 })
 
 export default router

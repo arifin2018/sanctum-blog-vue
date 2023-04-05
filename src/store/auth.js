@@ -92,7 +92,7 @@ export default {
                             icon: 'error',
                             title: this.errors,
                             showConfirmButton: false,
-                            timer: 2000
+                            timer: 4000
                         })
                     }
                 } else {
@@ -102,7 +102,7 @@ export default {
                         icon: 'error',
                         title: this.errors,
                         showConfirmButton: false,
-                        timer: 2000
+                        timer: 4000
                     })
                 }
 
@@ -117,13 +117,13 @@ export default {
                     }
                 })
                 commit('SET_authenticated', true),
-                    commit('SET_user', response)
+                commit('SET_user', response)
                 localStorage.setItem('SET_user', JSON.stringify(response.data))
                 cookie.set('SET_authenticated', true, getters.timeExpired + 'MIN')
                 sessionStorage.setItem('SET_token', getters.token)
             } catch (error) {
                 commit('SET_authenticated', false),
-                    commit('SET_user', [])
+                commit('SET_user', [])
             }
         },
 
@@ -147,7 +147,7 @@ export default {
                     icon: 'success',
                     title: response.data.message,
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 4500
                 })
             } catch (error) {
                 if (error.response.data.message == 'Unauthenticated.') {
