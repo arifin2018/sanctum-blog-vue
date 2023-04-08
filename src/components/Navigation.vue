@@ -1,6 +1,9 @@
 <template>
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div v-if="isLoading">
+                <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" disableScrolling="false" name="dots"></loader>
+            </div>
             <div class="container">
                 <router-link :to='{name:"home"}'>Navbar</router-link>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -13,6 +16,7 @@
                             <router-link class="nav-item nav-link" to="/">Home</router-link>
                             <router-link class="nav-item nav-link" to="/about">About</router-link>
                             <router-link class="nav-item nav-link" :to="{name: 'blog'}">Blog</router-link>
+                            <router-link class="nav-item nav-link" :to="{name: 'post.index'}">Post</router-link>
                             <router-link class="nav-item nav-link" :to="{name: 'auth.login'}">Login</router-link>
                         </div>
                     </div>
@@ -25,6 +29,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <router-link class="dropdown-item btn" :to="{name: 'about'}">About</router-link>
+                            <router-link class="dropdown-item btn" :to="{name: 'post.index'}">Post</router-link>
                             <router-link class="dropdown-item btn" :to="{name: 'blog'}">Blog</router-link>
                             <form @submit.prevent="authLogout()">
                                 <button class="dropdown-item btn">Logout</button>
@@ -45,12 +50,14 @@
         data() {
             return {
                 userMe: [],
-                auth: false
+                auth: false,
+                isLoading: false
             }
         },
         computed: {
             ...mapGetters({
                 user: 'auth/user',
+                Loading: 'auth/isLoading' 
             }),
         },
         mounted() {
@@ -65,7 +72,8 @@
             }),
             async authLogout(){
                 try {
-                    await this.logout()
+                    this.Loading;
+                    await this.logout();
                     this.$router.replace({name: 'home'});
                 } catch (error) {
                     console.log('error.logout');
@@ -76,7 +84,6 @@
         },
         watch:{
             user(val, oldval){
-                console.log(val);
                 if (val.data) {
                         this.userMe = val.data
                         this.auth = this.$cookies.get('SET_authenticated')
@@ -89,6 +96,11 @@
                     this.auth = false
                 }
                 
+            },
+            Loading(val,oldval){
+                this.isLoading = val;
+                console.log('Loading');
+                console.log(val);
             }
         }
     }

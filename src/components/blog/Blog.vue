@@ -1,35 +1,16 @@
 <template>
     <div>
+        <div v-if="isLoading">
+            <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" disableScrolling="false" name="dots"></loader>
+        </div>
         <div class="container">
-            <div v-if="gridSystems.length < 3">
-                <template v-for="gridSystem in gridSystems[0]">
-                    <div class="row mb-3">
-                        <template v-for="gridSystem in gridSystems[1]" :key="gridSystem">
-                            <div class="col-sm">
-                                <Card header="Arifin" text="Text"></Card>
-                            </div>
-                        </template>
-                    </div>
-                </template>
-            </div>
-            <div v-else>
-                <div v-for="gridSystem in (gridSystems[0]-1)">
-                    <div class="row mb-3">
-                        <template v-for="gridSystem in gridSystems[1]">
-                            <div class="col-sm">
-                                <Card header="Arifin" text="Text"></Card>
-                            </div>
-                        </template>
-                    </div>
-                </div>
                 <div class="row mb-3">
-                    <template v-for="gridSystem in gridSystems[2]">
+                    <template v-for="blog in blogs">
                         <div class="col-sm-4">
-                            <Card header="Arifin" text="Text"></Card>
+                            <Card :header="blog.title.length > 33 ? blog.title.substring(0, 33) + '...' : blog.title.substring(0, 33)" :text="blog.body" :author="blog.author"></Card>
                         </div>
                     </template>
                 </div>
-            </div>  
         </div>
     </div>
 </template>
@@ -42,74 +23,41 @@
         name: 'SanctumBlogBlog',
         data() {
             return {
-                blog: [
-                    {
-                        headers: 'arifin',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'azriel',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'MJ',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'pradipta',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'rafiq',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'khoirunnisa',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'miftahul',
-                        text: 'text'
-                    },
-                    {
-                        headers: 'jannah',
-                        text: 'text'
-                    },
-                ],
-                gridSystem: []
+                blogs:[],
+                isLoading: false
             };
         },
 
         mounted() {
-            console.log(this.gridSystem);
+            this.getPost;
         },
 
         computed: {
-            gridSystems() {
-                const BlogLength = this.blog.length;
-                
-                let columns = this.blog.length / 3;
-                let columnsFloor = Math.floor(this.blog.length / 3);
-                let rows = Math.ceil(this.blog.length / 3);
-
-                if (columns % 1 == 0) {
-                    return [
-                        columns,
-                        rows
-                    ]                    
-                }else{
-                    return [
-                        rows,
-                        Math.ceil(columns),
-                        columnsFloor
-                    ]
+            async getPost(){
+                try {
+                    this.isLoading = true;
+                    let token = sessionStorage.getItem("SET_token");
+                    this.token = token;
+                    let response = await this.axios.get('api/post', {
+                        headers: {
+                            "Authorization": `Bearer ${this.token}`
+                        }
+                    })
+                    this.blogs = response.data.data;
+                } catch (error) {
+                    if (error.response.data.message = "Unauthenticated.") {
+                        console.log(this.$cookies.remove('SET_authenticated'));
+                        this.$store.dispatch('SET_authenticated', false)
+                        window.location.reload();
+                        this.$router.replace({name: 'auth.login'});
+                    }
+                }finally{
+                    this.isLoading = false;
                 }
-
-            }
+            },
         },
 
         methods: {
-
         },
 
         components: {

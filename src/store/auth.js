@@ -9,7 +9,8 @@ export default {
         authenticated: false,
         user: [],
         token: '',
-        timeExpired: 0
+        timeExpired: 0,
+        isLoading: false
     },
     getters: {
         check(state) {
@@ -23,6 +24,9 @@ export default {
         },
         timeExpired(state) {
             return state.timeExpired
+        },
+        isLoading(state){
+            return state.isLoading
         }
     },
     mutations: {
@@ -37,15 +41,18 @@ export default {
         },
         SET_timeExpired(state, value) {
             state.timeExpired = value
+        },
+        SET_isLoading(state,value){
+            state.isLoading = value
         }
     },
     actions: {
-
         async login({
             commit,
             dispatch
         }, credentials) {
             try {
+                commit('SET_isLoading', true)
                 await axios.post('api/login', credentials, {
                     headers: {
                         'Accept': 'application/json',
@@ -107,6 +114,9 @@ export default {
                 }
 
             }
+            finally{
+                commit('SET_isLoading', false)
+            }
         },
 
         async me({commit,getters}) {
@@ -131,6 +141,7 @@ export default {
             commit
         }) {
             try {
+                commit('SET_isLoading', true)
                 let token = sessionStorage.getItem("SET_token");
                 let response = await axios.post('api/logout', {}, {
                     headers: {
@@ -138,7 +149,7 @@ export default {
                     }
                 });
                 commit('SET_authenticated', false),
-                    commit('SET_user', [])
+                commit('SET_user', [])
                 localStorage.clear();
                 sessionStorage.clear();
                 cookie.remove('SET_authenticated')
@@ -155,6 +166,9 @@ export default {
                     cookie.remove('SET_authenticated')
                     location.reload()
                 }
+            }
+            finally{
+                commit('SET_isLoading', false)
             }
         },
     },

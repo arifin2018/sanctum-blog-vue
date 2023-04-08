@@ -1,6 +1,9 @@
 <template>
     <div>
         <form @submit.prevent="authLogin()">
+            <div v-if="isLoading">
+                <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" disableScrolling="false" name="dots"></loader>
+            </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
                 <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
@@ -32,8 +35,14 @@
                     password: ''
                 },
                 errors: '',
-                user: []
+                user: [],
+                isLoading: false
             }
+        },
+        computed:{
+            ...mapGetters({
+                Loading: 'auth/isLoading' 
+            }),
         },
         methods: {
             ...mapActions({
@@ -41,10 +50,14 @@
             }),
             async authLogin() {
                 try {
+                    this.isLoading = this.Loading
                     let response = await this.login(this.form)
                     this.$router.replace({name: 'home'});
+                    this.isLoading = this.Loading
                 } catch (error) {
                     console.log(error);
+                }finally{
+                    this.isLoading = false;
                 }
             },
         },

@@ -1,14 +1,14 @@
 <template>
     <div>
-        <div class="card w-100">
-            <div class="card-header">
-                {{ header }}
+            <div class="card w-100 mb-3">
+                <div class="card-header">
+                    {{ header }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ author }}</h5>
+                    <p class="card-text">{{ text }}</p>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">{{ text }}</p>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -17,7 +17,8 @@
         name: 'Card',
         props:{
             header: String,
-            text: String
+            text: String,
+            author: String
         },
         data() {
             return {

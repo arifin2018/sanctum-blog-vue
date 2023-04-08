@@ -10,6 +10,7 @@ import Footer from '../components/Footer/Footer.vue';
 import store from '../store'
 import cookie from 'vue-cookies'
 import Blog from '../components/blog/Blog.vue'
+import Post from '../components/post/Post.vue'
 import Swal from 'sweetalert2/dist/sweetalert2'
 
 const routes = [{
@@ -33,6 +34,17 @@ const routes = [{
     name: 'blog',
     components: {
       default: Blog,
+      footer: Footer
+    },
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/post',
+    name: 'post.index',
+    components: {
+      default: Post,
       footer: Footer
     },
     meta: {
