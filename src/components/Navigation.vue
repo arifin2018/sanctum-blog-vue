@@ -2,15 +2,15 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div v-if="isLoading">
-                <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" disableScrolling="false" name="dots"></loader>
+                <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" name="dots"></loader>
             </div>
             <div class="container">
                 <router-link :to='{name:"home"}'>Navbar</router-link>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
                 <template v-if="!auth">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div class="navbar-nav ml-auto">
                             <router-link class="nav-item nav-link" to="/">Home</router-link>
@@ -74,7 +74,7 @@
                 try {
                     this.Loading;
                     await this.logout();
-                    this.$router.replace({name: 'home'});
+                    this.$router.replace({name: 'auth.login'});
                 } catch (error) {
                     console.log('error.logout');
                     console.log(error);

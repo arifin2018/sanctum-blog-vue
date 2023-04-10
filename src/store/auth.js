@@ -2,6 +2,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2/dist/sweetalert2'
 import cookie from 'vue-cookies'
 import moment from 'moment';
+import router from '@/router';
 
 export default {
     namespaced: true,
@@ -168,6 +169,7 @@ export default {
                 }
             }
             finally{
+                router.replace({name: 'auth.login'});
                 commit('SET_isLoading', false)
             }
         },

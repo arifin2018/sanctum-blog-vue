@@ -1,11 +1,9 @@
 <template>
   <Navigation />
-  <div class="py-2 container">
+  <div class="py-2 container view-90vh">
     <router-view />
   </div>
-  <footer>
-    <router-view name="footer" class="w-100 position-absolute text-center bottom-0"></router-view>
-  </footer>
+  <router-view name="footer"></router-view>
 </template>
 
 <script>
@@ -24,6 +22,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
+    height: 70vh;
   }
 
   nav {
@@ -36,12 +35,6 @@
       &.router-link-exact-active {
         color: #42b983;
       }
-    }
-  }
-
-  footer {
-    .bottom-0 {
-      bottom: 0;
     }
   }
 </style>
